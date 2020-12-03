@@ -1,4 +1,4 @@
-import {Layout, Menu, Pagination} from 'antd';
+import {Input, Layout, Menu, Pagination} from 'antd';
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -11,7 +11,8 @@ import 'antd/dist/antd.css';
 import './App.css'
 import axios from "axios";
 import Character from "./components/Character";
-
+import Filters from "./components/filters";
+const { Search } = Input;
 const { Header, Sider, Content } = Layout;
 
 class App extends React.Component {
@@ -24,11 +25,42 @@ class App extends React.Component {
     state = {
     collapsed: false,
         characters: [],
-        info: {}
+        info: {},
+        currentPage: 1,
+        currentName: '',
+        currentStatus: '',
+        currentSpecies: '',
+        currentGender: ''
+
   };
 
-    fetchCharracters(page = 1){
-        axios.get(`https://rickandmortyapi.com/api/character?page=${page}`)
+    onFilter(payload){
+        payload &&
+        this.setState({
+            [payload.name]:payload.property
+        })
+        setTimeout(()=>this.fetchCharracters(),0)
+    }
+
+    selectPage(page){
+        this.setState({
+            currentPage: page
+        })
+        setTimeout(()=>this.fetchCharracters(),0)
+    }
+
+    inputName(name){
+        this.setState({
+            currentName: name
+        })
+    }
+
+    fetchCharracters(){
+        axios.get(`https://rickandmortyapi.com/api/character?page=${this.state.currentPage}
+            ${this.state.currentName.length > 0 ? `&name=${this.state.currentName}` : ''}
+            ${this.state.currentStatus.length > 0 ? `&status=${this.state.currentStatus}` :''}
+            ${this.state.currentSpecies.length > 0 ? `&species=${this.state.currentSpecies}`: ''}
+            ${this.state.currentGender.length > 0 ? `&gender=${this.state.currentGender}`: ''}`)
             .then(({data})=>{
                 this.setState({characters:data.results, info: data.info})
             })
@@ -43,9 +75,9 @@ class App extends React.Component {
   render() {
     return (
         <Layout>
-          <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
+          <Sider width={300} theme="light" trigger={null} collapsible collapsed={this.state.collapsed}>
             <div className="logo" />
-            <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
+            <Menu theme="light" mode="inline" defaultSelectedKeys={['1']}>
               <Menu.Item key="1" icon={<UserOutlined />}>
                 Characters
               </Menu.Item>
@@ -55,6 +87,13 @@ class App extends React.Component {
               <Menu.Item key="3" icon={<AreaChartOutlined />}>
                 Locations
               </Menu.Item>
+                {
+                    !this.state.collapsed && <Filters currentStatus={this.state.currentStatus}
+                                                      currentGender={this.state.currentGender}
+                                                      currentSpecies={this.state.currentSpecies}
+                                                      onFilter={(a)=>this.onFilter(a)}
+                    />
+                }
             </Menu>
           </Sider>
           <Layout className="site-layout">
@@ -63,6 +102,13 @@ class App extends React.Component {
                 className: 'trigger',
                 onClick: this.toggle,
               })}
+                <Search
+                    placeholder="input search text"
+                    allowClear
+                    enterButton="Search"
+                    size="large"
+                    onSearch={(value)=>console.log(value)}
+                />
             </Header>
             <Content
                 className="site-layout-background"
@@ -77,13 +123,13 @@ class App extends React.Component {
                         this.state.characters.length > 0 &&
                         this.state.characters.map(i => <Character key={i.id} character={i} />)
                     }
-                </div>{console.log(this.state.info)}
+                </div>
                 <div className="pagi">
                     <Pagination defaultCurrent={1}
                                 total={this.state.info.count && this.state.info.count}
                                 defaultPageSize={20}
                                 showSizeChanger={false}
-                                onChange={(page)=>this.fetchCharracters(page)}
+                                onChange={(page)=>this.selectPage(page)}
                     />
                 </div>
             </Content>

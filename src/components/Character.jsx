@@ -1,18 +1,19 @@
-import {Card} from "antd";
+import {Card, Typography} from "antd";
 import {
     HeartTwoTone,
     FrownOutlined
 } from '@ant-design/icons'
+const { Title } = Typography;
 
-const Characters = ({character}) =>{
+const Character = ({character}) =>{
     return(
-        <Card title={character.name} extra={character.status === "Alive" ? <h4><HeartTwoTone twoToneColor="#eb2f96" /> {character.status}</h4> : <h4><FrownOutlined /> {character.status}</h4>} style={{ width: 330, marginTop: 20 }}>
+        <Card title={character.name} extra={character.status === "Alive" ? <Title level={5}><HeartTwoTone twoToneColor="#eb2f96" /> {character.status}</Title> : <h4><FrownOutlined /> {character.status}</h4>} style={{ width: 330, marginTop: 20 }}>
             <img src={character.image} alt=""/>
-            <h3>Species: {character.species}</h3>
-            <h3>Gender: {character.gender}</h3>
-            <h3>Origin: {character.origin.name}</h3>
+            <Title level={5}>Species: {character.species}</Title>
+            <Title level={5}>Gender: {character.gender}</Title>
+            <Title level={5}>Origin: {character.origin.name}</Title>
         </Card>
     )
 }
 
-export default Characters
+export default Character
