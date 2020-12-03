@@ -1,4 +1,4 @@
-import { Layout, Menu } from 'antd';
+import {Layout, Menu, Pagination} from 'antd';
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -18,17 +18,21 @@ class App extends React.Component {
 
 
     componentDidMount() {
-        axios.get('https://rickandmortyapi.com/api/character')
-            .then(({data})=>{
-                this.setState({characters:data.results})
-                console.log('sf')
-            })
+        this.fetchCharracters()
     }
 
     state = {
     collapsed: false,
-        characters: []
+        characters: [],
+        info: {}
   };
+
+    fetchCharracters(page = 1){
+        axios.get(`https://rickandmortyapi.com/api/character?page=${page}`)
+            .then(({data})=>{
+                this.setState({characters:data.results, info: data.info})
+            })
+    }
 
   toggle = () => {
     this.setState({
@@ -73,6 +77,14 @@ class App extends React.Component {
                         this.state.characters.length > 0 &&
                         this.state.characters.map(i => <Character key={i.id} character={i} />)
                     }
+                </div>{console.log(this.state.info)}
+                <div className="pagi">
+                    <Pagination defaultCurrent={1}
+                                total={this.state.info.count && this.state.info.count}
+                                defaultPageSize={20}
+                                showSizeChanger={false}
+                                onChange={(page)=>this.fetchCharracters(page)}
+                    />
                 </div>
             </Content>
           </Layout>

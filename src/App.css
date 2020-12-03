@@ -26,3 +26,9 @@
   flex-wrap: wrap;
   justify-content: space-around;
 }
+
+.pagi{
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
