@@ -10,21 +10,24 @@ import React from "react";
 import 'antd/dist/antd.css';
 import './App.css'
 import axios from "axios";
+import Character from "./components/Character";
 
 const { Header, Sider, Content } = Layout;
 
 class App extends React.Component {
-    characters = []
+
 
     componentDidMount() {
         axios.get('https://rickandmortyapi.com/api/character')
             .then(({data})=>{
-                this.characters = data.results
+                this.setState({characters:data.results})
+                console.log('sf')
             })
     }
 
     state = {
     collapsed: false,
+        characters: []
   };
 
   toggle = () => {
@@ -65,7 +68,12 @@ class App extends React.Component {
                   minHeight: 280,
                 }}
             >
-
+                <div className="characters">
+                    {
+                        this.state.characters.length > 0 &&
+                        this.state.characters.map(i => <Character key={i.id} character={i} />)
+                    }
+                </div>
             </Content>
           </Layout>
         </Layout>
