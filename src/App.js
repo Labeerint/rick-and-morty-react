@@ -30,14 +30,14 @@ class App extends React.Component {
         currentName: '',
         currentStatus: '',
         currentSpecies: '',
-        currentGender: ''
-
+        currentGender: '',
   };
 
     onFilter(payload){
         payload &&
         this.setState({
-            [payload.name]:payload.property
+            [payload.name]:payload.property,
+            currentPage: 1
         })
         setTimeout(()=>this.fetchCharracters(),0)
     }
@@ -49,13 +49,20 @@ class App extends React.Component {
         setTimeout(()=>this.fetchCharracters(),0)
     }
 
-    inputName(name){
+    inputName(e){
         this.setState({
-            currentName: name
+            currentName: e.target.value,
+            currentPage: 1
         })
+        setTimeout(()=>this.fetchCharracters(),0)
     }
 
     fetchCharracters(){
+        console.log(`https://rickandmortyapi.com/api/character?page=${this.state.currentPage}
+            ${this.state.currentName.length > 0 ? `&name=${this.state.currentName}` : ''}
+            ${this.state.currentStatus.length > 0 ? `&status=${this.state.currentStatus}` :''}
+            ${this.state.currentSpecies.length > 0 ? `&species=${this.state.currentSpecies}`: ''}
+            ${this.state.currentGender.length > 0 ? `&gender=${this.state.currentGender}`: ''}`)
         axios.get(`https://rickandmortyapi.com/api/character?page=${this.state.currentPage}
             ${this.state.currentName.length > 0 ? `&name=${this.state.currentName}` : ''}
             ${this.state.currentStatus.length > 0 ? `&status=${this.state.currentStatus}` :''}
@@ -97,17 +104,19 @@ class App extends React.Component {
             </Menu>
           </Sider>
           <Layout className="site-layout">
-            <Header className="site-layout-background" style={{ padding: 0 }}>
+            <Header className="site-layout-background" style={{ padding: 10, display:"flex", justifyContent: 'space-between' }}>
               {React.createElement(this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
                 className: 'trigger',
                 onClick: this.toggle,
               })}
                 <Search
+                    style={{width:600}}
                     placeholder="input search text"
                     allowClear
                     enterButton="Search"
                     size="large"
-                    onSearch={(value)=>console.log(value)}
+                    value={this.state.currentName}
+                    onChange={(e)=>this.inputName(e)}
                 />
             </Header>
             <Content
@@ -126,6 +135,7 @@ class App extends React.Component {
                 </div>
                 <div className="pagi">
                     <Pagination defaultCurrent={1}
+                                current={this.state.currentPage}
                                 total={this.state.info.count && this.state.info.count}
                                 defaultPageSize={20}
                                 showSizeChanger={false}
