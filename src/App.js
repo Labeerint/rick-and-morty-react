@@ -3,8 +3,7 @@ import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined, AreaChartOutlined
+  VideoCameraOutlined, AreaChartOutlined
 } from '@ant-design/icons';
 import React from "react";
 import 'antd/dist/antd.css';
