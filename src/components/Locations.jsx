@@ -1,19 +1,43 @@
 import store from "../store";
-import Location from "./Location";
 import React from "react";
 import {observer} from "mobx-react-lite";
+import {Table} from "antd";
 
 
 const Locations = observer(({locations}) =>{
     React.useEffect(()=>{
-
+        store.fetchLocations()
     })
+
+    const columns = [
+        {
+            title: 'N',
+            dataIndex: 'id',
+            key: 'id',
+            render: text => <a>{text}</a>,
+        },
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: 'Type',
+            dataIndex: 'type',
+            key: 'type',
+        },
+        {
+            title: 'Dimension',
+            dataIndex: 'dimension',
+            kay: 'dimension'
+        }
+    ];
+
+    const data = store.locations
+
     return(
         <div className="characters">
-            {
-                store.locations.length > 0 &&
-                store.locations.map(i => <Location key={i.id} location={i} />)
-            }
+            <Table columns={columns} dataSource={data} pagination={false} />
         </div>
     )
 })
