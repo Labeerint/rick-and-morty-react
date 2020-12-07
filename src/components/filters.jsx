@@ -5,52 +5,37 @@ import {
     Select,
     Typography
 } from 'antd';
-
+import store from "../store";
+import {observer} from "mobx-react-lite";
 const { Title } = Typography;
 const { Option } = Select;
 
 
-const Filters = ({onFilter, currentStatus, currentSpecies, currentGender}) => {
+const Filters = observer(() => {
     const [componentSize, setComponentSize] = useState('');
     const onFormLayoutChange = ({ size }) => {
         setComponentSize(size);
     };
 
     function onSelectStatus(value){
-        onFilter({
+        store.onFilter({
             name: 'currentStatus',
             property: value
         })
     }
 
     function onSelectGender(value){
-        onFilter({
+        store.onFilter({
             name: 'currentGender',
             property: value
         })
     }
 
     function onInputSpecies(e){
-        onFilter({
+        store.onFilter({
             name: 'currentSpecies',
             property: e.target.value
         })
-    }
-
-    function onChange(value) {
-        console.log(`selected ${value}`);
-    }
-
-    function onBlur() {
-        console.log('blur');
-    }
-
-    function onFocus() {
-        console.log('focus');
-    }
-
-    function onSearch(val) {
-        console.log('search:', val);
     }
     return (
         <>
@@ -71,7 +56,7 @@ const Filters = ({onFilter, currentStatus, currentSpecies, currentGender}) => {
                         placeholder="Select a status"
                         optionFilterProp="children"
                         onChange={onSelectStatus}
-                        value={currentStatus}
+                        value={store.currentStatus}
                         filterOption={(input, option) =>
                             option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                         }
@@ -86,12 +71,12 @@ const Filters = ({onFilter, currentStatus, currentSpecies, currentGender}) => {
                     <Input style={{ width: 200 }}
                            placeholder="Input a species"
                            onChange={onInputSpecies}
-                           value={currentSpecies}/>
+                           value={store.currentSpecies}/>
                 </Form.Item>
                 <Form.Item label="Gender ">
                     <Select
                         showSearch
-                        value={currentGender}
+                        value={store.currentGender}
                         style={{ width: 200 }}
                         placeholder="Select a gender"
                         optionFilterProp="children"
@@ -110,6 +95,6 @@ const Filters = ({onFilter, currentStatus, currentSpecies, currentGender}) => {
             </Form>
         </>
     );
-};
+});
 
 export default Filters

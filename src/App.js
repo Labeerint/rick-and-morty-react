@@ -1,4 +1,4 @@
-import {Input, Layout, Menu, Pagination} from 'antd';
+import {Layout, Menu} from 'antd';
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -8,69 +8,21 @@ import {
 import React from "react";
 import 'antd/dist/antd.css';
 import './App.css'
-import axios from "axios";
-import Character from "./components/Character";
 import Filters from "./components/filters";
-const { Search } = Input;
+import {Link, Route} from "react-router-dom";
+import Characters from "./components/Charecters";
+import Locations from "./components/Locations";
+import Episodes from "./components/Episodes";
+import Pagin from "./components/Pagin";
+import SearchCompon from "./components/Search";
+import store from "./store";
+
 const { Header, Sider, Content } = Layout;
 
 class App extends React.Component {
-
-
-    componentDidMount() {
-        this.fetchCharracters()
-    }
-
     state = {
     collapsed: false,
-        characters: [],
-        info: {},
-        currentPage: 1,
-        currentName: '',
-        currentStatus: '',
-        currentSpecies: '',
-        currentGender: '',
   };
-
-    onFilter(payload){
-        payload &&
-        this.setState({
-            [payload.name]:payload.property,
-            currentPage: 1
-        })
-        setTimeout(()=>this.fetchCharracters(),0)
-    }
-
-    selectPage(page){
-        this.setState({
-            currentPage: page
-        })
-        setTimeout(()=>this.fetchCharracters(),0)
-    }
-
-    inputName(e){
-        this.setState({
-            currentName: e.target.value,
-            currentPage: 1
-        })
-        setTimeout(()=>this.fetchCharracters(),0)
-    }
-
-    fetchCharracters(){
-        console.log(`https://rickandmortyapi.com/api/character?page=${this.state.currentPage}
-            ${this.state.currentName.length > 0 ? `&name=${this.state.currentName}` : ''}
-            ${this.state.currentStatus.length > 0 ? `&status=${this.state.currentStatus}` :''}
-            ${this.state.currentSpecies.length > 0 ? `&species=${this.state.currentSpecies}`: ''}
-            ${this.state.currentGender.length > 0 ? `&gender=${this.state.currentGender}`: ''}`)
-        axios.get(`https://rickandmortyapi.com/api/character?page=${this.state.currentPage}
-            ${this.state.currentName.length > 0 ? `&name=${this.state.currentName}` : ''}
-            ${this.state.currentStatus.length > 0 ? `&status=${this.state.currentStatus}` :''}
-            ${this.state.currentSpecies.length > 0 ? `&species=${this.state.currentSpecies}`: ''}
-            ${this.state.currentGender.length > 0 ? `&gender=${this.state.currentGender}`: ''}`)
-            .then(({data})=>{
-                this.setState({characters:data.results, info: data.info})
-            })
-    }
 
   toggle = () => {
     this.setState({
@@ -81,24 +33,20 @@ class App extends React.Component {
   render() {
     return (
         <Layout>
-          <Sider width={300} theme="light" trigger={null} collapsible collapsed={this.state.collapsed}>
+          <Sider width={300} theme="light" trigger={null} collapsible collapsed={this.state.collapsed} >
             <div className="logo" />
-            <Menu theme="light" mode="inline" defaultSelectedKeys={['1']}>
+            <Menu theme="light" mode="inline" onSelect={store.changeMenuItem.bind(store)} defaultSelectedKeys={['1']}>
               <Menu.Item key="1" icon={<UserOutlined />}>
-                Characters
+                  <Link to='/'>Characters</Link>
               </Menu.Item>
               <Menu.Item key="2" icon={<VideoCameraOutlined />}>
-                Episodes
+                  <Link to='/episodes'>Episodes</Link>
               </Menu.Item>
               <Menu.Item key="3" icon={<AreaChartOutlined />}>
-                Locations
+                  <Link to='/locations'>Locations</Link>
               </Menu.Item>
                 {
-                    !this.state.collapsed && <Filters currentStatus={this.state.currentStatus}
-                                                      currentGender={this.state.currentGender}
-                                                      currentSpecies={this.state.currentSpecies}
-                                                      onFilter={(a)=>this.onFilter(a)}
-                    />
+                    !this.state.collapsed && <Filters/>
                 }
             </Menu>
           </Sider>
@@ -108,15 +56,7 @@ class App extends React.Component {
                 className: 'trigger',
                 onClick: this.toggle,
               })}
-                <Search
-                    style={{width:600}}
-                    placeholder="input search text"
-                    allowClear
-                    enterButton="Search"
-                    size="large"
-                    value={this.state.currentName}
-                    onChange={(e)=>this.inputName(e)}
-                />
+              <SearchCompon/>
             </Header>
             <Content
                 className="site-layout-background"
@@ -126,20 +66,11 @@ class App extends React.Component {
                   minHeight: 280,
                 }}
             >
-                <div className="characters">
-                    {
-                        this.state.characters.length > 0 &&
-                        this.state.characters.map(i => <Character key={i.id} character={i} />)
-                    }
-                </div>
+                <Route exact path='/' render={()=><Characters characters={this.state.characters}/>}/>
+                <Route path='/locations' render={()=><Locations locations={this.state.locations}/>} />
+                <Route path='/episodes' component={Episodes}/>
                 <div className="pagi">
-                    <Pagination defaultCurrent={1}
-                                current={this.state.currentPage}
-                                total={this.state.info.count && this.state.info.count}
-                                defaultPageSize={20}
-                                showSizeChanger={false}
-                                onChange={(page)=>this.selectPage(page)}
-                    />
+                    <Pagin/>
                 </div>
             </Content>
           </Layout>
