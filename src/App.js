@@ -45,9 +45,9 @@ class App extends React.Component {
               <Menu.Item key="3" icon={<AreaChartOutlined />}>
                   <Link to='/locations'>Locations</Link>
               </Menu.Item>
-                {
-                    !this.state.collapsed && <Filters/>
-                }
+                <Route exact path='/'>
+                    {!this.state.collapsed && <Filters/>}
+                </Route>
             </Menu>
           </Sider>
           <Layout className="site-layout">
@@ -66,8 +66,8 @@ class App extends React.Component {
                   minHeight: 280,
                 }}
             >
-                <Route exact path='/' render={()=><Characters characters={this.state.characters}/>}/>
-                <Route path='/locations' render={()=><Locations locations={this.state.locations}/>} />
+                <Route exact path='/' component={Characters}/>
+                <Route path='/locations' component={Locations} />
                 <Route path='/episodes' component={Episodes}/>
                 <div className="pagi">
                     <Pagin/>

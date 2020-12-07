@@ -6,6 +6,7 @@ class Store{
     activeMenuItem = '1'
     characters = []
     locations =[]
+    episodes = []
     info = {}
     currentPage= 1
     currentName= ''
@@ -37,7 +38,7 @@ class Store{
                 this.fetchCharracters()
                 break;
             case '2':
-                console.log('fuck you')
+                this.fetchEpisodes()
                 break;
             case '3':
                 this.fetchLocations()
@@ -49,11 +50,6 @@ class Store{
     }
 
     fetchCharracters(){
-        console.log(`https://rickandmortyapi.com/api/character?page=${this.currentPage}
-            ${this.currentName.length > 0 ? `&name=${this.currentName}` : ''}
-            ${this.currentStatus.length > 0 ? `&status=${this.currentStatus}` :''}
-            ${this.currentSpecies.length > 0 ? `&species=${this.currentSpecies}`: ''}
-            ${this.currentGender.length > 0 ? `&gender=${this.currentGender}`: ''}`)
         axios.get(`https://rickandmortyapi.com/api/character?page=${this.currentPage}
             ${this.currentName.length > 0 ? `&name=${this.currentName}` : ''}
             ${this.currentStatus.length > 0 ? `&status=${this.currentStatus}` :''}
@@ -66,12 +62,21 @@ class Store{
     }
 
     fetchLocations(){
-        axios.get(`https://rickandmortyapi.com/api/location?page=${this.currentPage}`)
+        axios.get(`https://rickandmortyapi.com/api/location?page=${this.currentPage}
+        ${this.currentName.length > 0 ? `&name=${this.currentName}` : ''}`)
             .then(({data})=>{
                 this.locations = data.results
                 this.info = data.info
-                console.log(data)
             })
+    }
+
+    fetchEpisodes(){
+        axios.get(`https://rickandmortyapi.com/api/episode?page=${this.currentPage}
+         ${this.currentName.length > 0 ? `&name=${this.currentName}` : ''}`)
+            .then(({data})=>{
+                this.episodes = data.results
+                this.info = data.info
+        })
     }
 
     selectPage(page){
@@ -82,7 +87,7 @@ class Store{
     inputName(e){
         this.currentName = e.target.value
         this.currentPage = 1
-        this.fetchCharracters()
+        this.fetchDataByKey()
     }
 
 

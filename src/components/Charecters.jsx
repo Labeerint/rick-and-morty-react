@@ -1,13 +1,12 @@
 import Character from "./Character";
 import React from "react";
-import axios from "axios";
 import store from "../store";
 import {observer} from "mobx-react-lite";
 
 
 const Characters = observer(() =>{
     React.useEffect(()=>{
-        store.fetchDataByKey()
+        store.fetchCharracters()
     },[])
 
     return(
